@@ -45,18 +45,40 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Welcome Section -->
-            <div class="welcome-section">
-                <h2>Security Analysis Center</h2>
-                <p>Analyze mobile numbers, email addresses, and URLs for potential security threats</p>
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2>Security Analysis Center</h2>
+            <p>Analyze mobile numbers, email addresses, and URLs for potential security threats</p>
+        </div>
+
+        <!-- Input Section -->
+        <form class="analysis-form">
+            <!-- Mobile Number -->
+            <div class="form-group">
+                <label for="mobile">Enter Mobile Number:</label>
+                <input type="text" id="mobile" name="mobile" placeholder="e.g. +91 9876543210" required>
             </div>
-    <main class="main-content">
-        <div class="Name">
-            <p>Enter your name : </p>
-            <div class="input-wrapper">
+
+            <!-- Email Address -->
+            <div class="form-group">
+                <label for="email">Enter Email Address:</label>
+                <input type="email" id="email" name="email" placeholder="e.g. example@mail.com" required>
+            </div>
+
+            <!-- URL -->
+            <div class="form-group">
+                <label for="url">Enter Website URL:</label>
+                <input type="url" id="url" name="url" placeholder="e.g. https://example.com" required>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Analyze</button>
+        </form>
+    </div>
+</main>
             <!-- Analysis Tabs -->
             <div class="analysis-tabs">
                 <div class="tab-list">
