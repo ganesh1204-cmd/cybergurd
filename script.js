@@ -490,4 +490,171 @@ function setAlert(analysis) {
 // Mobile menu
 function initializeMobileMenu() {
   const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
- 
+  const navMenu = document.querySelector('.nav-menu');
+  
+  mobileMenuBtn.addEventListener('click', () => {
+    navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+  });
+}
+
+// Input validation
+function initializeInputValidation() {
+  const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="url"]');
+  
+  inputs.forEach(input => {
+    input.addEventListener('blur', validateInput);
+    input.addEventListener('input', clearValidationError);
+  });
+}
+
+function validateInput(event) {
+  const input = event.target;
+  const value = input.value.trim();
+  
+  if (!value) return;
+  
+  const type = input.id.replace('-input', '');
+  
+  if (validateTarget[type] && !validateTarget[type](value)) {
+    input.style.borderColor = '#ef4444';
+    showInputError(input, `Please enter a valid ${type}`);
+  } else {
+    input.style.borderColor = '#3b82f6';
+    clearInputError(input);
+  }
+}
+
+function clearValidationError(event) {
+  const input = event.target;
+  input.style.borderColor = '#475569';
+  clearInputError(input);
+}
+
+function showInputError(input, message) {
+  clearInputError(input);
+  
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'input-error';
+  errorDiv.style.color = '#ef4444';
+  errorDiv.style.fontSize = '0.75rem';
+  errorDiv.style.marginTop = '0.25rem';
+  errorDiv.textContent = message;
+  
+  input.parentNode.appendChild(errorDiv);
+}
+
+function clearInputError(input) {
+  const existingError = input.parentNode.querySelector('.input-error');
+  if (existingError) {
+    existingError.remove();
+  }
+}
+
+// Keyboard shortcuts
+function initializeKeyboardShortcuts() {
+  document.addEventListener('keydown', (event) => {
+    // Ctrl/Cmd + Enter to submit form
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      const activeForm = document.querySelector('.tab-content.active .analysis-form');
+      if (activeForm) {
+        activeForm.dispatchEvent(new Event('submit'));
+      }
+    }
+    
+    // Tab switching with numbers
+    if (event.key >= '1' && event.key <= '3') {
+      const tabIndex = parseInt(event.key) - 1;
+      const tabTypes = ['phone', 'email', 'url'];
+      if (tabTypes[tabIndex]) {
+        switchTab(tabTypes[tabIndex]);
+      }
+    }
+  });
+}
+
+// Auto-save form data
+function initializeAutoSave() {
+  const inputs = document.querySelectorAll('input, select');
+  
+  inputs.forEach(input => {
+    // Load saved value
+    const savedValue = localStorage.getItem(`cyberguard_${input.id}`);
+    if (savedValue && input.type !== 'checkbox') {
+      input.value = savedValue;
+    } else if (savedValue && input.type === 'checkbox') {
+      input.checked = savedValue === 'true';
+    }
+    
+    // Save on change
+    input.addEventListener('change', () => {
+      if (input.type === 'checkbox') {
+        localStorage.setItem(`cyberguard_${input.id}`, input.checked);
+      } else {
+        localStorage.setItem(`cyberguard_${input.id}`, input.value);
+      }
+    });
+  });
+}
+
+// Progress animation
+function animateProgress() {
+  const progressFill = document.querySelector('.progress-fill');
+  if (progressFill) {
+    let width = 0;
+    const interval = setInterval(() => {
+      width += Math.random() * 10;
+      if (width >= 100) {
+        width = 100;
+        clearInterval(interval);
+      }
+      progressFill.style.width = `${width}%`;
+    }, 200);
+  }
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  initializeTabs();
+  initializeForms();
+  initializeActionButtons();
+  initializeMobileMenu();
+  initializeInputValidation();
+  initializeKeyboardShortcuts();
+  initializeAutoSave();
+  updateHistory();
+  
+  // Set default active tab
+  switchTab('phone');
+  
+  console.log('CyberGuard Security Platform initialized');
+});
+
+// Service Worker registration for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('Service Worker registered'))
+      .catch(() => console.log('Service Worker registration failed'));
+  });
+}
+
+// Analytics tracking (placeholder)
+function trackEvent(eventName, eventData) {
+  console.log('Analytics Event:', eventName, eventData);
+  // In a real application, this would send data to analytics service
+}
+
+// Track form submissions
+document.addEventListener('submit', (event) => {
+  if (event.target.classList.contains('analysis-form')) {
+    const formType = event.target.id.replace('-form', '');
+    trackEvent('analysis_started', { type: formType });
+  }
+});
+
+// Performance monitoring
+window.addEventListener('load', () => {
+  const loadTime = performance.now();
+  console.log(`Page loaded in ${loadTime.toFixed(2)}ms`);
+  trackEvent('page_load_time', { loadTime });
+});
